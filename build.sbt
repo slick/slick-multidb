@@ -1,7 +1,7 @@
 libraryDependencies ++= List(
   "org.slf4j" % "slf4j-nop" % "2.0.0",
   "com.h2database" % "h2" % "2.1.214",
-  "org.xerial" % "sqlite-jdbc" % "3.39.2.1"
+  "org.xerial" % "sqlite-jdbc" % "3.39.3.0"
 )
 
 scalacOptions += "-deprecation"
