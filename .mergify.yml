@@ -7,7 +7,6 @@ pull_request_rules:
     conditions:
       - or:
           - author=scala-steward
-          - author=renovate[bot]
       - check-success=Build and Test (ubuntu-latest, 2.12.16, temurin@11)
     actions:
         queue:
