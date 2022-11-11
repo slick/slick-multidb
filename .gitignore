@@ -5,3 +5,5 @@ target/
 .idea/
 .metals/
 .vscode/
+metals.sbt
+.bloop/
