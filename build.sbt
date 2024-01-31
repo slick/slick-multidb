@@ -10,7 +10,7 @@ mergifyExtraConditions := Seq(
 libraryDependencies ++= List(
   "org.slf4j" % "slf4j-nop" % "2.0.11",
   "com.h2database" % "h2" % "2.2.224",
-  "org.xerial" % "sqlite-jdbc" % "3.45.0.0"
+  "org.xerial" % "sqlite-jdbc" % "3.45.1.0"
 )
 
 scalacOptions += "-deprecation"
