@@ -8,7 +8,7 @@ mergifyExtraConditions := Seq(
 )
 
 libraryDependencies ++= List(
-  "org.slf4j" % "slf4j-nop" % "2.0.11",
+  "org.slf4j" % "slf4j-nop" % "2.0.12",
   "com.h2database" % "h2" % "2.2.224",
   "org.xerial" % "sqlite-jdbc" % "3.45.1.0"
 )
