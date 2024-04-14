@@ -16,7 +16,7 @@ libraryDependencies ++= List(
 scalacOptions += "-deprecation"
 
 run / fork := true
-libraryDependencies += "com.typesafe.slick" %% "slick" % "3.5.0"
+libraryDependencies += "com.typesafe.slick" %% "slick" % "3.5.1"
 
 // based on https://stackoverflow.com/a/63780833/333643
 lazy val runAll = taskKey[Unit]("Run all main classes")
