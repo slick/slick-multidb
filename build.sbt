@@ -1,4 +1,4 @@
-import _root_.io.github.nafg.mergify.dsl._
+import _root_.io.github.nafg.mergify.dsl.*
 
 
 mergifyExtraConditions := Seq(
@@ -36,6 +36,6 @@ runAll := {
   runAllIn(Test).value
 }
 
+ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.zulu("11"))
 ThisBuild / githubWorkflowBuild += WorkflowStep.Sbt(List("runAll"), name = Some(s"Run all main classes"))
-
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
