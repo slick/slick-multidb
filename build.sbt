@@ -1,5 +1,7 @@
 import _root_.io.github.nafg.mergify.dsl.*
 
+ThisBuild / scalaVersion := "2.13.15"
+ThisBuild / scalacOptions += "-Xsource:3"
 
 mergifyExtraConditions := Seq(
   (Attr.Author :== "scala-steward") ||
@@ -8,23 +10,23 @@ mergifyExtraConditions := Seq(
 )
 
 libraryDependencies ++= List(
-  "org.slf4j" % "slf4j-nop" % "2.0.16",
-  "com.h2database" % "h2" % "2.3.232",
-  "org.xerial" % "sqlite-jdbc" % "3.46.1.3"
+  "org.slf4j"      % "slf4j-nop"   % "2.0.16",
+  "com.h2database" % "h2"          % "2.3.232",
+  "org.xerial"     % "sqlite-jdbc" % "3.46.1.3"
 )
 
 scalacOptions += "-deprecation"
 
-run / fork := true
+run / fork                                  := true
 libraryDependencies += "com.typesafe.slick" %% "slick" % "3.5.1"
 
 // based on https://stackoverflow.com/a/63780833/333643
 lazy val runAll = taskKey[Unit]("Run all main classes")
 
 def runAllIn(config: Configuration) = Def.task {
-  val s = streams.value
-  val cp = (config / fullClasspath).value
-  val r = (config / run / runner).value
+  val s       = streams.value
+  val cp      = (config / fullClasspath).value
+  val r       = (config / run / runner).value
   val classes = (config / discoveredMainClasses).value
   classes.foreach { className =>
     r.run(className, cp.files, Seq(), s.log).get
@@ -36,6 +38,9 @@ runAll := {
   runAllIn(Test).value
 }
 
-ThisBuild / githubWorkflowJavaVersions := Seq(JavaSpec.zulu("11"))
-ThisBuild / githubWorkflowBuild += WorkflowStep.Sbt(List("runAll"), name = Some(s"Run all main classes"))
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.zulu("11"))
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+ThisBuild / githubWorkflowBuild += WorkflowStep.Sbt(
+  List("runAll"),
+  name = Some(s"Run all main classes")
+)
