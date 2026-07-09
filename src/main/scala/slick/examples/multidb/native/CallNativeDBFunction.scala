@@ -10,7 +10,7 @@ import slick.jdbc.H2Profile.api.*
 /** This example shows how to lift a native database function to Slick's query
   * language.
   */
-object CallNativeDBFunction extends App {
+object CallNativeDBFunction {
   private class SalesPerDay(tag: Tag)
       extends Table[(Date, Int)](tag, "SALES_PER_DAY") {
     def day   = column[Date]("DAY", O.PrimaryKey)
@@ -33,30 +33,32 @@ object CallNativeDBFunction extends App {
                   .groupBy(_._1)
   } yield (dow, q.map(_._2).sum)
 
-  val db = Database.forConfig("h2")
-  val f  = db.run(
-    DBIO.seq(
-      salesPerDay.schema.create,
-      salesPerDay ++= Seq(
-        (Date.valueOf("2011-04-01"), 3),
-        (Date.valueOf("2011-04-02"), 8),
-        (Date.valueOf("2011-04-03"), 0),
-        (Date.valueOf("2011-04-04"), 2),
-        (Date.valueOf("2011-04-05"), 1),
-        (Date.valueOf("2011-04-06"), 1),
-        (Date.valueOf("2011-04-07"), 2),
-        (Date.valueOf("2011-04-08"), 5),
-        (Date.valueOf("2011-04-09"), 4),
-        (Date.valueOf("2011-04-10"), 0),
-        (Date.valueOf("2011-04-11"), 2)
-      ),
-      q1.result.map { r =>
-        println("Day of week (1 = Sunday) -> Sales:")
-        r.foreach { case (dow, sum) => println("  " + dow + "\t->\t" + sum) }
-      }
+  def main(args: Array[String]): Unit = {
+    val db = Database.forConfig("h2")
+    val f  = db.run(
+      DBIO.seq(
+        salesPerDay.schema.create,
+        salesPerDay ++= Seq(
+          (Date.valueOf("2011-04-01"), 3),
+          (Date.valueOf("2011-04-02"), 8),
+          (Date.valueOf("2011-04-03"), 0),
+          (Date.valueOf("2011-04-04"), 2),
+          (Date.valueOf("2011-04-05"), 1),
+          (Date.valueOf("2011-04-06"), 1),
+          (Date.valueOf("2011-04-07"), 2),
+          (Date.valueOf("2011-04-08"), 5),
+          (Date.valueOf("2011-04-09"), 4),
+          (Date.valueOf("2011-04-10"), 0),
+          (Date.valueOf("2011-04-11"), 2)
+        ),
+        q1.result.map { r =>
+          println("Day of week (1 = Sunday) -> Sales:")
+          r.foreach { case (dow, sum) => println("  " + dow + "\t->\t" + sum) }
+        }
+      )
     )
-  )
 
-  Await.result(f, Duration.Inf)
-  db.close()
+    Await.result(f, Duration.Inf)
+    db.close()
+  }
 }
