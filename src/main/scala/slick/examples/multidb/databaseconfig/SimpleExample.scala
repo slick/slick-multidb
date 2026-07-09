@@ -8,7 +8,7 @@ import slick.basic.DatabaseConfig
 import slick.examples.multidb.Util
 import slick.jdbc.JdbcProfile
 
-object SimpleExample extends App {
+object SimpleExample {
 
   // #dc
   private val dc = DatabaseConfig.forConfig[JdbcProfile]("h2_dc")
@@ -28,20 +28,22 @@ object SimpleExample extends App {
   private def get(key: String): DBIO[Option[String]] =
     props.filter(_.key === key).map(_.value).result.headOption
 
-  try {
-    // Initialize the Database
-    val db = dc.db
-    val f  = db.run(
-      DBIO
-        .seq(
-          props.schema.create,
-          props += ("foo", "bar"),
-          get("foo").map(r => println("- Value for key 'foo': " + r)),
-          get("baz").map(r => println("- Value for key 'baz': " + r))
-        )
-        .withPinnedSession
-    )
-    val f2 = f andThen { case _ => db.close }
-    Await.result(f2, Duration.Inf)
-  } finally Util.unloadDrivers()
+  def main(args: Array[String]): Unit = {
+    try {
+      // Initialize the Database
+      val db = dc.db
+      val f  = db.run(
+        DBIO
+          .seq(
+            props.schema.create,
+            props += ("foo", "bar"),
+            get("foo").map(r => println("- Value for key 'foo': " + r)),
+            get("baz").map(r => println("- Value for key 'baz': " + r))
+          )
+          .withPinnedSession
+      )
+      val f2 = f andThen { case _ => db.close }
+      Await.result(f2, Duration.Inf)
+    } finally Util.unloadDrivers()
+  }
 }
