@@ -21,6 +21,7 @@ run / fork                                  := true
 libraryDependencies += "com.typesafe.slick" %% "slick" % "3.6.0"
 
 // based on https://stackoverflow.com/a/63780833/333643
+@transient
 lazy val runAll = taskKey[Unit]("Run all main classes")
 
 def runAllIn(config: Configuration) = Def.task {
@@ -28,6 +29,7 @@ def runAllIn(config: Configuration) = Def.task {
   val cp      = (config / fullClasspath).value
   val r       = (config / run / runner).value
   val classes = (config / discoveredMainClasses).value
+  given FileConverter = fileConverter.value
   classes.foreach { className =>
     r.run(className, cp.files, Seq(), s.log).get
   }
@@ -38,7 +40,7 @@ runAll := {
   runAllIn(Test).value
 }
 
-ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.zulu("11"))
+ThisBuild / githubWorkflowJavaVersions          := Seq(JavaSpec.zulu("17"))
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 ThisBuild / githubWorkflowBuild += WorkflowStep.Sbt(
   List("runAll"),
