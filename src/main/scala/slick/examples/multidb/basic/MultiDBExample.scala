@@ -14,7 +14,7 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.{H2Profile, SQLiteProfile}
 
 /** Run SLICK code with multiple profiles. */
-object MultiDBExample extends App {
+object MultiDBExample {
 
   // #run
   def run(dao: DAO, db: Database): Future[Unit] = {
@@ -37,17 +37,21 @@ object MultiDBExample extends App {
     )
   }
 
-  try {
-    // #create
-    val f = {
-      val h2db = Database.forConfig("h2")
-      run(new DAO(H2Profile), h2db).andThen { case _ => h2db.close }
-    }.flatMap { _ =>
-      val sqlitedb = Database.forConfig("sqlite")
-      run(new DAO(SQLiteProfile), sqlitedb).andThen { case _ => sqlitedb.close }
-    }
-    // #create
+  def main(args: Array[String]): Unit = {
+    try {
+      // #create
+      val f = {
+        val h2db = Database.forConfig("h2")
+        run(new DAO(H2Profile), h2db).andThen { case _ => h2db.close }
+      }.flatMap { _ =>
+        val sqlitedb = Database.forConfig("sqlite")
+        run(new DAO(SQLiteProfile), sqlitedb).andThen { case _ =>
+          sqlitedb.close
+        }
+      }
+      // #create
 
-    Await.result(f, Duration.Inf)
-  } finally Util.unloadDrivers()
+      Await.result(f, Duration.Inf)
+    } finally Util.unloadDrivers()
+  }
 }

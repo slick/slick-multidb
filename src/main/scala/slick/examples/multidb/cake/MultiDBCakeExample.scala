@@ -9,7 +9,7 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.{H2Profile, SQLiteProfile}
 
 /** Run Slick code with multiple profiles using the Cake pattern. */
-object MultiDBCakeExample extends App {
+object MultiDBCakeExample {
 
   def run(dal: DAL, db: Database): Future[Unit] = {
     import dal.profile.api.*
@@ -41,16 +41,20 @@ object MultiDBCakeExample extends App {
     db.run(dbio.withPinnedSession)
   }
 
-  try {
-    val f = {
-      val h2db = Database.forConfig("h2")
-      run(new DAL(H2Profile), h2db).andThen { case _ => h2db.close }
-    }.flatMap { _ =>
-      val sqlitedb = Database.forConfig("sqlite")
-      run(new DAL(SQLiteProfile), sqlitedb).andThen { case _ => sqlitedb.close }
-    }
+  def main(args: Array[String]): Unit = {
+    try {
+      val f = {
+        val h2db = Database.forConfig("h2")
+        run(new DAL(H2Profile), h2db).andThen { case _ => h2db.close }
+      }.flatMap { _ =>
+        val sqlitedb = Database.forConfig("sqlite")
+        run(new DAL(SQLiteProfile), sqlitedb).andThen { case _ =>
+          sqlitedb.close
+        }
+      }
 
-    Await.result(f, Duration.Inf)
-  } finally Util.unloadDrivers()
+      Await.result(f, Duration.Inf)
+    } finally Util.unloadDrivers()
+  }
 
 }
